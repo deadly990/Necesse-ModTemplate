@@ -5,7 +5,7 @@ import necesse.engine.network.server.ServerClient;
 
 public class TPAResponseEvent extends PreventableGameEvent {
     public final ServerClient teleportTarget;
-    private final boolean accepted;
+    public final boolean accepted;
 
 
     public TPAResponseEvent(ServerClient teleportTarget, boolean accepted) {

@@ -42,6 +42,11 @@ public class TPARequestEvent extends PreventableGameEvent {
         logs.addClient("TPA Request from " + source.getName() + " expired", target);
     }
 
+    public void reject() {
+        logs.addClient("TPA Request to " + target.getName() + " rejected", source);
+        logs.addClient("TPA Request from " + source.getName() + " rejected", target);
+    }
+
     private static class TeleportPos {
         public final ServerClient client;
         public final String name;

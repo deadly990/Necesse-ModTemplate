@@ -3,10 +3,9 @@ package TeleportsExtended.Listener;
 import TeleportsExtended.Events.TPARequestEvent;
 import TeleportsExtended.Events.TPAResponseEvent;
 import com.google.common.cache.*;
-import com.google.common.collect.MapMaker;
 import necesse.engine.GameEventListener;
+import necesse.engine.GameLog;
 
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 public class TPAListener {
@@ -19,12 +18,7 @@ public class TPAListener {
         this.requestListener = new TPARequestListener(this);
         this.responseListener = new TPAResponseListener(this);
     }
-    private static RemovalListener<String, TPARequestEvent> listener = notification -> {
-        if (notification.getCause() == RemovalCause.EXPIRED) {
-            notification.getValue().expire();
-        }
-    };
-    private Cache<String, TPARequestEvent> requests = CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS).removalListener(listener).build();
+    private Cache<String, TPARequestEvent> requests = CacheBuilder.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS).build();
 
     private void onRequest(TPARequestEvent request) {
         if (requests.getIfPresent(request.target.getName()) == null) {
@@ -40,7 +34,11 @@ public class TPAListener {
             response.preventDefault();
             return;
         }
-        request.execute();
+        if(response.accepted) {
+            request.execute();
+        } else {
+            request.reject();
+        }
         requests.invalidate(response.teleportTarget.getName());
     }
 
